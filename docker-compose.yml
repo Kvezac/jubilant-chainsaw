@@ -1,0 +1,75 @@
+services:
+  app:
+    container_name: fast_api_package_server
+    build: .
+    restart: always
+    environment:
+      - API_REDIS_HOST=redis
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  db_mysql:
+    container_name: mysql
+    image: mysql:8.4
+    restart: always
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${db_pass}
+      MYSQL_DATABASE: ${db_name}
+      MYSQL_USER: ${db_user}
+      MYSQL_PASSWORD: ${db_pass}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${db_user}", "-p${db_pass}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=${redis_user}
+      - REDIS_PORT=${REDIS_PORT}
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-h", "redis", "-p", "6379", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.10.7-management
+    hostname: rabbitmq
+    restart: always
+    ports:
+      - 15672:15672
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_DEFAULT_USER=${rm_user}
+      - RABBITMQ_DEFAULT_PASS=${rm_pass}
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=${rm_args}
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
