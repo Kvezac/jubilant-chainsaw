@@ -16,6 +16,7 @@ pydantic-settings = "^2.6.1"
 sqlalchemy = "^2.0.36"
 aiohttp = "^3.10.10"
 aiomysql = "^0.2.0"
+redis = "^5.2.0"
 
 
 [tool.poetry.group.dev.dependencies]

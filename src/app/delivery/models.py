@@ -1,0 +1,33 @@
+from datetime import datetime
+from uuid import uuid4
+
+from sqlalchemy import Decimal, ForeignKey, DateTime
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql import func
+
+from src.app.config import settings
+from src.app.infrastructure.database.database import Base
+
+
+class Categories(Base):
+    __tablename__ = 'Categories'
+
+    id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
+    name: Mapped[str]
+
+
+class Deliveries(Base):
+    __tablename__ = 'Packages'
+
+    id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
+    name: Mapped[str]
+    weight: Mapped[Decimal]
+    type_id: Mapped[int] = mapped_column(ForeignKey('categories.id'), nullable=False)
+    user_session: Mapped[uuid4] = mapped_column(nullable=False)
+    content_value: Mapped[Decimal] = mapped_column(Decimal(10, 2))
+    shipping_cost: Mapped[Decimal | str] = mapped_column(Decimal(10, 2), default='Не рассчитано')
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=settings.get_timezone),
+                                                 server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(settings.get_timezone), onupdate=func.now())
+
+    type = relationship("Categories")
