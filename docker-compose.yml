@@ -78,5 +78,18 @@ services:
       timeout: 10s
       retries: 5
 
+  celery:
+    container_name: celery
+    build:
+      context: .
+    env_file:
+      - .env
+    environment:
+      TIME_ZONE=${time_zone}
+    restart: unless-stopped
+    command: sh -c "poetry run celery -A src.app.infrastructure.tasks.accessor.py worker --loglevel=info broker_connection_retry_on_startup=True"
+    depends_on:
+      - mysql
+      - rabbitmq
 
 
