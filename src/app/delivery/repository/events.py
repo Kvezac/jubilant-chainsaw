@@ -19,4 +19,4 @@ async def get_currency_exchange_rate():
     url = settings.get_url_currency_exchange_rate
     async with aiohttp.ClientSession() as session:
         task = await asyncio.create_task(fetch_content(url, session))
-        await RedisTools.set_pair('USD', task)
+        await RedisTools.set_pair('rate_usd', task)

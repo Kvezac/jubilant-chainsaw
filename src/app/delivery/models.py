@@ -1,7 +1,8 @@
 from datetime import datetime
+from decimal import Decimal
 from uuid import uuid4
 
-from sqlalchemy import Decimal, ForeignKey, DateTime
+from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -23,11 +24,11 @@ class Deliveries(Base):
     name: Mapped[str]
     weight: Mapped[Decimal]
     type_id: Mapped[int] = mapped_column(ForeignKey('categories.id'), nullable=False)
-    user_session: Mapped[uuid4] = mapped_column(nullable=False)
-    content_value: Mapped[Decimal] = mapped_column(Decimal(10, 2))
-    shipping_cost: Mapped[Decimal | str] = mapped_column(Decimal(10, 2), default='Не рассчитано')
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=settings.get_timezone),
+    user_session: Mapped[str] = mapped_column(nullable=False)
+    content_value: Mapped[Decimal] = mapped_column(default='0')
+    shipping_cost: Mapped[str] = mapped_column(default='Не рассчитано')
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=settings.time_zone),
                                                  server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(settings.get_timezone), onupdate=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(settings.time_zone), onupdate=func.now())
 
     type = relationship("Categories")

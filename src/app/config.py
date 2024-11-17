@@ -16,13 +16,16 @@ class Settings(BaseSettings):
 
     api_course: str
 
+    rm_driver: str
     rm_user: str
     rm_pass: str
     rm_args: str
+    rm_host: str
+    rm_local_port: str
 
     @property
     def database_url(self) -> str:
-        return f'{self.db_driver}://{self.db_user}:{self.db_pass}@{self.db_port}/{self.db_name}'
+        return f'{self.db_name}+{self.db_driver}://{self.db_user}:{self.db_pass}@{self.db_port}/{self.db_name}'
 
     @property
     def get_redis_url(self) -> str:
@@ -31,6 +34,10 @@ class Settings(BaseSettings):
     @property
     def get_url_currency_exchange_rate(self) -> str:
         return self.api_course
+
+    @property
+    def get_rabbitmq_url(self):
+        return f'{self.rm_driver}://{self.user}:{self.rm_pass}@{self.rm_host:{self.rm_local_port}}'
 
     model_config = SettingsConfigDict(env_file="../../.env")
 

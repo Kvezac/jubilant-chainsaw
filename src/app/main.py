@@ -1,3 +1,4 @@
+import asyncio
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -6,15 +7,19 @@ from fastapi_utils.tasks import repeat_every
 
 from src.app.delivery.handlers import router as delivery_router
 from src.app.delivery.repository.events import get_currency_exchange_rate as exchange
+from src.app.delivery.tasks import start_consuming
+
 from src.app.infrastructure.database.accessor import create_tables, delete_tables
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_tables()
+    await create_tables()
+    await asyncio.create_task(start_consuming())
+
     yield
 
-    delete_tables()
+    await delete_tables()
 
 
 def create_app() -> FastAPI:
