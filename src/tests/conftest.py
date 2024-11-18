@@ -50,3 +50,10 @@ async def db_session(db_engine):
     async with async_session() as session:
         yield session
     logger.info("Database session closed.")
+
+
+@pytest.fixture(scope="module")
+async def test_app(db_engine):
+    app = create_app()
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        yield client
