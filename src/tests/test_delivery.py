@@ -44,7 +44,7 @@ async def test_insert_initial_data(db_session):
 
 @pytest.mark.asyncio
 async def test_create_delivery(test_app, db_session):
-    logger.info("Creating a new category for delivery...")
+    logger.info("Creating  for delivery...")
     category_response = await test_app.post("/categories/", json={"name": "одежда"})
     category_id = category_response.json()["id"]
 
@@ -61,3 +61,24 @@ async def test_create_delivery(test_app, db_session):
     assert response.status_code == 201
     assert response.json()["name"] == "Delivery"
     logger.info("Delivery created: %s", response.json())
+
+
+@pytest.mark.asyncio
+async def test_negative_delivery(test_app, db_session):
+    logger.info("Creating for negative delivery...")
+    category_response = await test_app.post("/categories/", json={"name": "одежда"})
+    category_id = category_response.json()["id"]
+
+    delivery_data = {
+        "name": "Delivery",
+        "weight": 'aaa',
+        "type_id": category_id,
+        "user_session": "одежда",
+        "content_value": 100.0
+    }
+
+    logger.info("Creating a negative delivery...")
+    response = await test_app.post("/deliveries/", json=delivery_data)
+    assert response.status_code == 422
+    assert response.json()["name"] == "Delivery"
+    logger.info("Delivery not created: %s", response.json())
