@@ -4,7 +4,7 @@ from src.app.dependecies import get_delivery_repository
 from src.app.delivery.schema import DeliveryCreateSchema, DeliverySchema, CategoriesSchema
 from src.app.delivery.service import DeliveryService
 from src.app.logger.common import configure_logging
-from src.app.delivery.tasks import update_chipping_coast_task
+from src.app.delivery.tasks import update_chipping_cost_task
 
 configure_logging()
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ async def create_delivery(
     response = await delivery_service.create_delivery(delivery, session_id)
     response_obj = Response(content=response.json())
     response_obj.set_cookie(key="session_id", value=session_id)
-    update_chipping_coast_task.dealay(session_id)
+    update_chipping_cost_task.delay(session_id)
     return response_obj
 
 

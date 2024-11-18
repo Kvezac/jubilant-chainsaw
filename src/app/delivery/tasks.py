@@ -1,12 +1,13 @@
-from src.app.dependecies import get_delivery_repository
+from src.app.delivery.repository.delevery import DeliveryRepository
+from src.app.delivery.service import DeliveryService
+from src.app.infrastructure.database.accessor import get_db_session
 from src.app.infrastructure.tasks.accessor import celery
 
 
-def get_delivery_service():
-    return get_delivery_repository()
-
-
 @celery.task
-def update_chipping_coast_task(session_id):
-    delivery_service = get_delivery_service()
-    delivery_service.update_shipping_cost(session_id)
+async def update_chipping_cost_task(session_id: str):
+    async with get_db_session() as db_session:
+        delivery_service = DeliveryService(
+            delivery_repository=DeliveryRepository(db_session),
+        )
+        await delivery_service.update_shipping_cost(session_id)
