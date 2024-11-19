@@ -64,8 +64,6 @@ services:
     ports:
       - "5672:5672"
       - 15672:15672
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
     env_file:
       - .env
     environment:
@@ -85,11 +83,9 @@ services:
     env_file:
       - .env
     environment:
-      TIME_ZONE=${time_zone}
+      TIME_ZONE: ${time_zone}
     restart: unless-stopped
-    command: sh -c "poetry run celery -A src.app.infrastructure.tasks.accessor.py worker --loglevel=info broker_connection_retry_on_startup=True"
+    command: celery -c app-dir=src.app.infrastructure.tasks.accessor:celery worker --log-level=info
     depends_on:
       - mysql
       - rabbitmq
-
-

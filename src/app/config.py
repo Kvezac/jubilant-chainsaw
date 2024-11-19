@@ -37,7 +37,7 @@ class Settings(BaseSettings):
 
     @property
     def get_rabbitmq_url(self):
-        return f'{self.rm_driver}://{self.user}:{self.rm_pass}@{self.rm_host:{self.rm_local_port}}'
+        return f'{self.rm_driver}://{self.rm_user}:{self.rm_pass}@{self.rm_host:{self.rm_local_port}}'
 
     model_config = SettingsConfigDict(env_file="../../.env")
 
