@@ -43,8 +43,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-if __name__ == '__main__':
-    n = settings
-    print(n.dict())
-    print(n.get_url_currency_exchange_rate)

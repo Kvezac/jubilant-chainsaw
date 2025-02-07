@@ -33,17 +33,14 @@ async def get_delivery(
         session_id: str = Cookie(None),
         delivery_service: DeliveryService = Depends(get_delivery_repository)
 ):
-    logger.info(f"Fetching delivery with ID: {delivery_id}")
     session_id = await delivery_service.ensure_session(session_id)
-    logger.debug(f"Ensured session ID: {session_id}")
     delivery = await delivery_service.get_delivery(delivery_id, session_id)
     logger.info(f"Fetched delivery: {delivery}")
     return delivery
 
 
-@router.get("/categories", response_model=list[CategoriesSchema])
+@router.get("/categories", response_model=list[list[CategoriesSchema]])
 async def get_categories(delivery_service: DeliveryService = Depends(get_delivery_repository)):
-    logger.info("Fetching all categories")
     categories = await delivery_service.get_categories()
     logger.info(f"Fetched categories: {categories}")
     return categories
@@ -54,7 +51,6 @@ async def get_category_by_id(
         category_id: int,
         delivery_service: DeliveryService = Depends(get_delivery_repository)
 ):
-    logger.info(f"Fetching category with ID: {category_id}")
     category = await delivery_service.get_category_id(category_id)
     logger.info(f"Fetched category: {category}")
     return category

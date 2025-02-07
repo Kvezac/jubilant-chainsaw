@@ -10,7 +10,7 @@ WORKDIR /code
 COPY poetry.lock pyproject.toml /code/
 
 RUN pip install poetry && \
-    poetry install --no-dev
+    poetry install -without dev
 
 EXPOSE 8000
 

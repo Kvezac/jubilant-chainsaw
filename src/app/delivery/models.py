@@ -1,6 +1,5 @@
 from datetime import datetime
 from decimal import Decimal
-from uuid import uuid4
 
 from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -18,7 +17,7 @@ class Categories(Base):
 
 
 class Deliveries(Base):
-    __tablename__ = 'Packages'
+    __tablename__ = 'Deliveries'
 
     id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
     name: Mapped[str]

@@ -21,13 +21,11 @@ class DeliveryService:
     calculate: Calculate
 
     async def create_delivery(self, body: DeliveryCreateSchema, session_id: str) -> DeliverySchema:
-        logger.info(f"Creating delivery with data: {body}")
         delivery = await self.delivery_repository.create(body, session_id)
         logger.info(f"Delivery created with ID: {delivery.id}")
         return delivery
 
     async def get_delivery(self, delivery_id: int, session_id: str) -> DeliverySchema:
-        logger.info(f"Fetching delivery with ID: {delivery_id}")
         delivery = await self.delivery_repository.get(delivery_id, session_id)
         if not delivery:
             logger.warning(f"Delivery with ID {delivery_id} not found")
@@ -51,7 +49,6 @@ class DeliveryService:
         return category
 
     async def update_shipping_cost(self, delivery_id: int) -> DeliverySchema:
-        logger.info(f"Updating shipping cost for delivery with ID: {delivery_id}")
         delivery = await self.delivery_repository.get_delivery(delivery_id=delivery_id)
         if not delivery:
             logger.error(f"Delivery with ID {delivery_id} not found")
@@ -61,7 +58,6 @@ class DeliveryService:
             logger.error("Dollar rate not found")
             raise DollarNotFound
         shipping_cost = self.calculate.calculate_cost(delivery.weight, delivery.content_value, dollar_rate)
-        logger.info(f"Calculated shipping cost: {shipping_cost}")
         updated_delivery = await self.delivery_repository.update_cost(delivery_id=delivery_id,
                                                                       shipping_cost=shipping_cost)
         logger.info(f"Updated delivery: {updated_delivery}")
@@ -69,10 +65,8 @@ class DeliveryService:
 
     async def ensure_session(self, session_id: str) -> str:
         if not session_id:
-            logger.info("Creating new session")
             session_id = self.calculate.create_session_token()
             await self.cache_tools.set_session(session_id)
-            logger.info(f"New session created with ID: {session_id}")
         else:
             logger.info(f"Using existing session with ID: {session_id}")
         return session_id

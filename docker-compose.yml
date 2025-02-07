@@ -1,6 +1,6 @@
 services:
   app:
-    container_name: fast_api_package_server
+    container_name: app
     build: .
     restart: always
     environment:
@@ -84,8 +84,8 @@ services:
       - .env
     environment:
       TIME_ZONE: ${time_zone}
-    restart: unless-stopped
-    command: celery -c app-dir=src.app.infrastructure.tasks.accessor:celery worker --log-level=info
+    restart: always
+    command: celery -A app-dir=src.app.infrastructure.tasks.accessor:celery worker --log-level=info
     depends_on:
       - mysql
       - rabbitmq
